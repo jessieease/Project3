@@ -1,4 +1,8 @@
 import React from 'react';
+import Temperature from '../Temperature';
+import VerticalDivider from '../VerticalDivider';
+import Text from './components/Text';
+import Meta from './components/Meta';
 import getWeather from '../../apis/getWeather';
 import styles from './Current.module.css';
 
@@ -8,13 +12,27 @@ class Current extends React.Component {
 
     this.state = {
       data: null,
+      loading: true,
     };
     
     this.setData=this.setData.bind(this);
   }
 
-  getWeather() {
+  async getWeather() {
     const { city } = this.props;
+
+    this.setState = {
+      loading: true
+    }
+
+    const { id } = city;
+
+    const { data } = await getWeather(id);
+  
+    this.setState ={
+      data,
+      loading: false,
+    }
   }
 
   componentDidMount(props) {
@@ -27,7 +45,7 @@ class Current extends React.Component {
 
 
   render() {
-    const { data } = this.state;
+    const { data, loading } = this.state;
 
     return (
       <div data-testid="CURRENT" className={styles.current}>
@@ -63,6 +81,7 @@ class Current extends React.Component {
     </div>
     )
   }
-
-
 };
+
+export default Current;
+
