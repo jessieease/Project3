@@ -15,45 +15,41 @@ class Current extends React.Component {
       loading: true,
     };
     
-    this.setData=this.setData.bind(this);
-  }
-
-  async getWeather() {
-    const { city } = this.props;
-
-    this.setState = {
-      loading: true
-    }
-
-    const { id } = city;
-
-    const { data } = await getWeather(id);
-  
-    this.setState ={
-      data,
-      loading: false,
-    }
-  }
-
-  componentDidMount(props) {
-    this.getWeather();
+    this.setData = this.setData.bind(this);
   }
 
   setData(data) {
     this.setState(data);
   }
 
+  getWeather() {
+    getWeather('2158177', (data) => {
+      this.setData({
+        temp: data.main.temp,
+        weather: data.weather[0].main,
+        humidity: `${data.main.humidity}%`,
+        wind: `${data.main.wind} km/h`,
+        cityName: data.name,
+      })
+    });
+  }
+
+  componentDidMount() {
+    this.getWeather();
+  }
+
 
   render() {
-    const { data, loading } = this.state;
+    const { data } = this.state;
+    console.log(this.state,111);
 
+    if(!data) {
+      return 'Loading...'
+    }
     return (
       <div data-testid="CURRENT" className={styles.current}>
-      {loading ? (
         <div className={styles.left}>
-          <div className={styles.loading}>Loading...</div>
         </div>
-      ) : (
         <React.Fragment>
           <div className={styles.left}>
             <div data-testid="TEMP" className={styles.temperature}>
@@ -76,7 +72,7 @@ class Current extends React.Component {
           <h1 data-testid="NAME" className={styles.city}>{data.name}</h1>
           </div>
         </React.Fragment>
-      )}
+      )
       <div className={styles.bottom} />
     </div>
     )
@@ -84,4 +80,3 @@ class Current extends React.Component {
 };
 
 export default Current;
-
